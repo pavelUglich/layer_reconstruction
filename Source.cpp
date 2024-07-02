@@ -294,7 +294,7 @@ int main()
 	int it = 0;
 	while(norm(right_part)>0.001 && it<20)
 	{
-		layer l2(kappa, points, rho1, rho0);
+		layer l2(kappa, points, rho0, rho1);
 		field1 = l2.observed(points);
 		mat = l2.MatrixRho(columns, rows);
 		right_part = field - field1;

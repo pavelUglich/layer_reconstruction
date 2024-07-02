@@ -269,8 +269,8 @@ int main()
 		points.push_back(c + k * (d - c) / rows);
 	}
 
-	Parameters::smooth_params.emplace_back([](double x) {return 1 + sin(pi*x); });
-	Parameters::smooth_params.emplace_back([](double x) {return 1; });//!!
+	Parameters::smooth_params.emplace_back([](double x) {return 1; });
+	Parameters::smooth_params.emplace_back([](double x) {return 1 + sin(pi * x); });//!!
 
 	layer l(kappa);
 	auto field = l.observed(points);
@@ -280,7 +280,7 @@ int main()
 
 	layer l1(kappa);
 	auto field1 = l1.observed(points);
-	auto mat = l1.MatrixMu(columns, rows);
+	auto mat = l1.MatrixRho(columns, rows);
 
 	std::vector<double> right_part = field - field1;
 	VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, Dirichle};
@@ -296,9 +296,10 @@ int main()
 	{
 		layer l2(kappa, points, rho1, rho0);
 		field1 = l2.observed(points);
-		mat = l2.MatrixMu(columns, rows);
+		mat = l2.MatrixRho(columns, rows);
 		right_part = field - field1;
-		VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, Dirichle};
+		VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, 
+			Dirichle};
 		for (size_t i = 0; i < rows; i++)
 		{
 			rho1[i] += V.solution()[i];

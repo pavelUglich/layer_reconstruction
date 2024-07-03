@@ -55,7 +55,7 @@ void plotTheDispersionalCurves(std::map<double, std::vector<double>>& dispersion
 	const auto numberOfCurves = dispersionSet.rbegin()->second.size();
 	for (auto& item : dispersionSet) {
 		sort(item.second.begin(), item.second.end());//,
-			//[](auto x, auto y) { return x < y.real(); });
+		//[](auto x, auto y) { return x < y.real(); });
 	}
 	const auto maxFreq = dispersionSet.rbegin()->first;
 	for (size_t i = 0; i < numberOfCurves; i++) {
@@ -266,24 +266,27 @@ int main()
 	double d = 1;
 	std::vector<double> points;
 	for (size_t k = 0; k < rows; k++) {
-		points.push_back(c + k * (d - c) / rows);
+		points.push_back(c + (k + 0.5) * (d - c) / rows);
 	}
 
 	Parameters::smooth_params.emplace_back([](double x) {return 1; });
-	Parameters::smooth_params.emplace_back([](double x) {return 1 + sin(pi * x); });//!!
+	Parameters::smooth_params.emplace_back([](double x) {return 1 + 0.1 * sin(pi * x); });//!!
 
 	layer l(kappa);
 	auto field = l.observed(points);
+	cout << l.dispersion_equation({ 1.0,1.0 }) << endl;
 
 	Parameters::smooth_params[0] = [](double x) {return 1; };
 	Parameters::smooth_params[1] = [](double x) {return 1; };
 
 	layer l1(kappa);
+	cout << l1.dispersion_equation({ 1.0,1.0 }) << endl;
+
 	auto field1 = l1.observed(points);
 	auto mat = l1.matrix_rho(columns, rows);
 
 	std::vector<double> right_part = field - field1;
-	VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, Dirichle};
+	VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, Dirichle };
 	auto rho1 = V.solution();
 	std::vector<double> rho0(rows, 1.0);
 	for (size_t i = 0; i < rows; i++)
@@ -292,14 +295,14 @@ int main()
 		//rho1[i] += 1.5;
 	}
 	int it = 0;
-	while(norm(right_part)>0.001 && it<20)
+	while (norm(right_part) > 0.001 && it < 20)
 	{
 		layer l2(kappa, points, rho0, rho1);
 		field1 = l2.observed(points);
 		mat = l2.matrix_rho(columns, rows);
 		right_part = field - field1;
-		VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, 
-			Dirichle};
+		VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle,
+			Dirichle };
 		for (size_t i = 0; i < rows; i++)
 		{
 			rho1[i] += V.solution()[i];
@@ -308,7 +311,7 @@ int main()
 		std::cout << it << std::endl;
 	}
 	std::cout << it << std::endl;
-	plotTheWaveField({ {"black", rho1}}, "mu.txt", 1.0 / rows);
+	plotTheWaveField({ {"black", rho1} }, "mu.txt", 1.0 / rows);
 	system("pause");
 	return 0;
 }

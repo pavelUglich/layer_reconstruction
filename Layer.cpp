@@ -116,7 +116,7 @@ layer::layer(double kkappa, const std::vector<double>& points,
 	residual_set = residualSet();
 }
 
-double layer::defOnTop(std::complex<double> alpha) const
+double layer::dispersion_equation(std::complex<double> alpha) const
 {
 	OdeSolver<std::complex<double>> cauchy_problem = { get_equation(alpha, 2), 
 		0.1e-6, RUNGE_KUTTA_FELDBERG };
@@ -127,13 +127,27 @@ double layer::defOnTop(std::complex<double> alpha) const
 double layer::findRoot(double a, double b, 
 	const std::function<double(double)>& f, double epsilon) const
 {
-	while (abs(b - a) > epsilon) {
-		const double fa = f(a);
-		const double fb = f(b);
-		a = b - (b - a) * fb / (fb - fa);
-		b = a - (a - b) * fa / (fa - fb);
-	}
-	return b;
+	double va = f(a);
+	double vb = f(b);
+	double cs = a;
+	double cn = b;
+	while (abs(cn - cs) > epsilon)
+		if (va * vb < 0) {
+			cs = cn;
+			cn = b - (b - a) * vb / (vb - va);
+			const double vc = f(cn);
+			if (va * vc < 0) {
+				b = cn;
+				vb = vc;
+			}
+			else if (va * vc > 0) {
+				a = cn;
+				va = vc;
+			}
+			else
+				return cn;
+		}
+	return cn;
 }
 
 std::vector<double> layer::find_roots(double a, double b, 
@@ -257,7 +271,7 @@ std::vector<std::vector<double>> layer::matrix_mu(size_t columns, size_t rows) c
 	std::vector<double> points_xi(columns);
 	std::vector<std::complex<double>> residuals;
 	for (size_t i = 0; i < rows; i++) {
-		points_x2[i] = (i + 0.5) / rows;
+		points_x2[i] = (i + 1.0) / rows;
 	}
 	points_x2.push_back(1.0);
 	for (size_t i = 0; i < columns; i++) {
@@ -301,10 +315,10 @@ std::vector<std::complex<double>> layer::getRoots()
 {
 	std::vector<std::complex<double>> result;
 	auto fun = [=](double alpha) {
-		return defOnTop({ alpha,0 });
+		return dispersion_equation({ alpha,0 });
 	};
 	auto fun_imag = [=](double alpha) {
-		return defOnTop({ 0,alpha });
+		return dispersion_equation({ 0,alpha });
 	};
 	auto real_roots = find_roots(0, 1.5 * kappa, fun, 20);
 	result.reserve(real_roots.size());
@@ -312,7 +326,7 @@ std::vector<std::complex<double>> layer::getRoots()
 	{
 		result.emplace_back(real_root, 0);
 	}
-	auto imag_roots = find_roots(0, 50, fun_imag, 20);
+	auto imag_roots = find_roots(0, 90, fun_imag, 40);
 	for (double& imag_root : imag_roots)
 	{
 		result.emplace_back(0, imag_root);

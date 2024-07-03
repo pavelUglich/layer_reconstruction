@@ -29,7 +29,7 @@ public:
 	layer(double kkappa);
 	layer(double kkappa, const std::vector<double>& points, const std::vector<double>& rho0, const std::vector<double>& rho1);
 
-	double defOnTop(std::complex<double> alpha) const;
+	double dispersion_equation(std::complex<double> alpha) const;
 	double findRoot(double a, double b, const std::function<double(double)>& f, double epsilon = 0.1e-6) const;
 	std::vector<double> find_roots(double a, double b, const std::function<double(double)>& f, size_t n, double epsilon = 0.1e-6) const;
 	std::map<double, std::vector<double>> dispersionalSet(double max_kappa, double step, size_t n, const std::function<double(double, double)>& f) const;

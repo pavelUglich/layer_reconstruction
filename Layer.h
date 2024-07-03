@@ -36,8 +36,8 @@ public:
 	std::complex<double> waves(double x1, const std::vector<std::complex<double>>& roots, const std::vector<std::complex<double>>& residuals) const;
 	std::map<double, std::complex<double>> waveField(double a, double b, double step, const std::vector<std::complex<double>>& residuals) const;
 	std::complex<double> residual(std::complex<double> alpha) const;
-	std::vector<std::vector<double>> MatrixRho(size_t columns, size_t rows) const;
-	std::vector<std::vector<double>> MatrixMu(size_t columns, size_t rows);
+	std::vector<std::vector<double>> matrix_rho(size_t columns, size_t rows) const;
+	std::vector<std::vector<double>> matrix_mu(size_t columns, size_t rows) const;
 	std::vector<double> observed(const std::vector<double>& points) const;
 private:
 	std::vector<std::complex<double>> getRoots();

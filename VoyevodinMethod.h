@@ -14,18 +14,11 @@ class VoyevodinMethod
 	vector<double> Solution;
 
 public:	
-
-
-	VoyevodinMethod(const vector<vector<double>>& matrix,
-	                vector<double> rightpart,
-	                double Step,
-	                BoundaryCondition Left = Neumann,
-	                BoundaryCondition Right = Neumann,
-	                double p = 1.0,
-	                double alphaInitialValue = 0.1e-1,
-	                double H = 1.0e-4,
-	                double Delta = 1.0e-4,
-	                double eps = 0.1e-3);;
+	VoyevodinMethod(const vector<vector<double>>& matrix, 
+		vector<double> rightpart, double Step, 
+		BoundaryCondition Left = Neumann, BoundaryCondition Right = Neumann, 
+		double p = 1.0, double alphaInitialValue = 0.1e-1, double H = 1.0e-4,
+		double Delta = 1.0e-4, double eps = 0.1e-3);
 
 
 	vector<double> solution() const;

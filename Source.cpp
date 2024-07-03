@@ -125,12 +125,12 @@ void plotTheWaveField(const std::map<double, std::complex<double>>& waveField, c
 	os << "\\begin{tikzpicture}[scale=1.5]\n";
 	os << "\\begin{axis}[grid]\n";
 	os << "\\addplot[smooth, red] plot coordinates{\n";
-	for (auto x : waveField) {
+	for (const auto& x : waveField) {
 		os << "(" << x.first << ", " << x.second.real() << ") ";
 	}
 	os << "};\n";
 	os << "\\addplot[smooth, blue] plot coordinates{\n";
-	for (auto x : waveField) {
+	for (const auto& x : waveField) {
 		os << "(" << x.first << ", " << x.second.imag() << ") ";
 	}
 	os << "};\n";
@@ -260,8 +260,8 @@ int main()
 {
 	setlocale(0, "");
 	double kappa = 2.0;
-	const size_t rows = 30;
-	double columns = 30;
+	const size_t rows = 20;
+	double columns = 20;
 	double c = 0;
 	double d = 1;
 	std::vector<double> points;
@@ -280,7 +280,7 @@ int main()
 
 	layer l1(kappa);
 	auto field1 = l1.observed(points);
-	auto mat = l1.MatrixRho(columns, rows);
+	auto mat = l1.matrix_rho(columns, rows);
 
 	std::vector<double> right_part = field - field1;
 	VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, Dirichle};
@@ -296,7 +296,7 @@ int main()
 	{
 		layer l2(kappa, points, rho0, rho1);
 		field1 = l2.observed(points);
-		mat = l2.MatrixRho(columns, rows);
+		mat = l2.matrix_rho(columns, rows);
 		right_part = field - field1;
 		VoyevodinMethod V = { mat, right_part, 1.0 / right_part.size(), Dirichle, 
 			Dirichle};

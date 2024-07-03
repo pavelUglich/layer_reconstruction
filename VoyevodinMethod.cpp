@@ -24,19 +24,13 @@ VoyevodinMethod::VoyevodinMethod(const vector<vector<double>>& matrix,
 	size = RightPart.size();
 	matrix_system matrixSystem = { matrix, RightPart, step, p, Left, Right };
 	//2. Запускаем итерационный процесс
-	iterative_process iterativeProcess = {
-		matrixSystem.diagonal(),
-		matrixSystem.up_diagonal(),
-		matrixSystem.rightPart(),
-		matrixSystem.multiply_qtu(RightPart),
-		AlphaInitialValue,
-		step,
-		h,
-		delta,
-		eps };
+	iterative_process iterativeProcess = { matrixSystem.diagonal(),	
+		matrixSystem.up_diagonal(),	matrixSystem.rightPart(), 
+		matrixSystem.multiply_qtu(RightPart), AlphaInitialValue, step, h, 
+		delta, eps };
 	//3. Получаем решение
 	Solution = iterativeProcess.solution();
-	//4. Возвращаемя к изначальным неизвестнымю
+	//4. Возвращаемся к изначальным неизвестным
 	matrixSystem.multiply_rtx(Solution);
 	matrixSystem.multiply_Sinv(Solution);
 }
